@@ -2,7 +2,7 @@
 import { getAuth } from "../utils/auth";
 import { server_url } from "../utils/config.js";
 
-const host = server_url;
+const host = server_url + "/api";
 
 const successStatusResponse = [200, 201, 204];
 
@@ -11,7 +11,8 @@ const axiosClient = axios.create({
 });
 
 axiosClient.interceptors.request.use(
-  (config) => {
+  (config) =>
+  {
     if (!config.url.includes("login") || !config.url.includes("register")) {
       const auth = getAuth();
       if (auth && auth.authToken) {
@@ -24,13 +25,15 @@ axiosClient.interceptors.request.use(
 );
 
 axiosClient.interceptors.response.use(
-  (response) => {
+  (response) =>
+  {
     if (response && response.data) {
       return response.data;
     }
     return response;
   },
-  (error) => {
+  (error) =>
+  {
     throw error;
   }
 );

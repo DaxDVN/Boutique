@@ -37,7 +37,7 @@ function ProductItem({ src, style, item })
       )}
 
       <img
-        src={src.includes("http") ? src : server_url + src}
+        src={(src.includes("http") || src.includes("assets")) ? src : server_url + src}
         alt="Iphone"
         className={`w-full transform transition duration-1000 ease-in-out hover:opacity-75 ${isImageLoaded ? "scale-100 opacity-100" : "scale-75 opacity-0"}`}
         onClick={handleClick}
