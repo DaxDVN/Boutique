@@ -4,7 +4,8 @@ const User = require("../models/User");
 const mongoose = require("mongoose");
 const path = require("path");
 
-exports.getProducts = async (req, res) => {
+exports.getProducts = async (req, res) =>
+{
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 8;
@@ -29,7 +30,8 @@ exports.getProducts = async (req, res) => {
   }
 };
 
-exports.searchProducts = async (req, res) => {
+exports.searchProducts = async (req, res) =>
+{
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 8;
@@ -67,7 +69,8 @@ exports.searchProducts = async (req, res) => {
   }
 };
 
-exports.getProduct = async (req, res) => {
+exports.getProduct = async (req, res) =>
+{
   try {
     const id = req.params.id;
 
@@ -107,7 +110,8 @@ exports.getProduct = async (req, res) => {
   }
 };
 
-exports.postProduct = async (req, res) => {
+exports.postProduct = async (req, res) =>
+{
   const imagePaths = req.files.map(file => `/images/${file.filename}`);
   if (imagePaths.length < 4) {
     return res.status(400).json({ message: "Need 4 images" });
@@ -122,7 +126,7 @@ exports.postProduct = async (req, res) => {
       category: req.body.category,
       name: req.body.name,
       price: req.body.price,
-      long_desc: req.body.long_desc,
+      long_desc: req.body1.long_desc,
       short_desc: req.body.short_desc,
       img1: imagePaths[0],
       img2: imagePaths[1],
@@ -136,13 +140,16 @@ exports.postProduct = async (req, res) => {
     });
 
   } catch (error) {
+    console.log(error)
     return res.status(500).json({
-      message: "Unexpected error!"
+      message: "Unexpected error!",
+      error: error
     });
   }
 };
 
-exports.putProduct = async (req, res) => {
+exports.putProduct = async (req, res) =>
+{
   try {
     const id = req.params.id;
     const updates = req.body;
@@ -165,7 +172,8 @@ exports.putProduct = async (req, res) => {
   }
 };
 
-exports.deleteProduct = async (req, res) => {
+exports.deleteProduct = async (req, res) =>
+{
   try {
     const id = req.params.id;
 

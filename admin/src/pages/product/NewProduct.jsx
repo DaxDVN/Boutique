@@ -6,7 +6,8 @@ import { Bounce, toast } from "react-toastify";
 
 const categories = ["iphone", "ipad", "macbook", "airpod", "watch", "mouse", "keyboard", "other"];
 
-function NewProduct() {
+function NewProduct()
+{
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -19,7 +20,8 @@ function NewProduct() {
     images: []
   });
   console.log(formData);
-  const handleImageUpload = (e) => {
+  const handleImageUpload = (e) =>
+  {
     const files = Array.from(e.target.files);
     console.log(files);
 
@@ -38,14 +40,16 @@ function NewProduct() {
     });
   };
 
-  const handleRemoveImage = (index) => {
+  const handleRemoveImage = (index) =>
+  {
     setFormData({
       ...formData,
       images: formData.images.filter((_, i) => i !== index)
     });
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e) =>
+  {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -53,7 +57,8 @@ function NewProduct() {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e) =>
+  {
     e.preventDefault();
     for (const value of Object.values(formData)) {
       if (typeof value === "string" && value === "") {
@@ -76,9 +81,11 @@ function NewProduct() {
       return;
     }
     const formDataToSend = new FormData();
-    Object.keys(formData).forEach((key) => {
+    Object.keys(formData).forEach((key) =>
+    {
       if (key === "images") {
-        formData.images.forEach((image) => {
+        formData.images.forEach((image) =>
+        {
           formDataToSend.append("images", image);
         });
       } else {
@@ -94,7 +101,8 @@ function NewProduct() {
       });
       navigate("/products");
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Failed to add product, please try again", {
+      console.log(err)
+      toast.error(err?.response?.data?.message || (err?.response?.data?.error.message || "Failed to add product, please try again"), {
         position: "top-right",
         autoClose: 2000,
         theme: "colored"
