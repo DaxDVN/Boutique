@@ -53,8 +53,8 @@ The server runs on **Port 5000**, the client on **Port 3000**, and the admin app
 ### Clone the repository
 
 ```bash
-git clone <repository_url>
-cd e-commerce-project
+git clone https://github.com/DaxDVN/Boutique
+cd Boutique
 ```
 
 ### Install dependencies
