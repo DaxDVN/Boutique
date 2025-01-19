@@ -19,12 +19,9 @@ function NewProduct()
     category: "",
     images: []
   });
-  console.log(formData);
   const handleImageUpload = (e) =>
   {
     const files = Array.from(e.target.files);
-    console.log(files);
-
     if (files.length + formData.images.length > 4) {
       toast.warn("You can only upload up to 4 images", {
         position: "top-right",
@@ -101,8 +98,7 @@ function NewProduct()
       });
       navigate("/products");
     } catch (err) {
-      console.log(err)
-      toast.error(err?.response?.data?.message || (err?.response?.data?.error.message || "Failed to add product, please try again"), {
+      toast.error(err?.response?.data?.message || "Failed to add product, please try again", {
         position: "top-right",
         autoClose: 2000,
         theme: "colored"

@@ -3,7 +3,7 @@ const Order = require("../models/Order");
 const User = require("../models/User");
 const mongoose = require("mongoose");
 const path = require("path");
-
+const cloudinary = require("../cloudinary")
 exports.getProducts = async (req, res) =>
 {
   try {
@@ -112,41 +112,87 @@ exports.getProduct = async (req, res) =>
 
 exports.postProduct = async (req, res) =>
 {
-  const imagePaths = req.files.map(file => `/images/${file.filename}`);
-  if (imagePaths.length < 4) {
+  if (!req.files || req.files.length < 4) {
     return res.status(400).json({ message: "Need 4 images" });
   }
+
   for (const value of Object.values(req.body)) {
     if (typeof value === "string" && value === "") {
       return res.status(400).json({ message: "Missing field" });
     }
   }
+
   try {
+    const uploadPromises = req.files.map(
+      (file) =>
+        new Promise((resolve, reject) =>
+        {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            {
+              folder: "products",
+              public_id: `${Date.now()}-${file.originalname.split(".")[0]}`,
+              resource_type: "image",
+            },
+            (err, result) =>
+            {
+              if (err) {
+                console.log("Cloudinary upload error:", err);
+              }
+              resolve(result?.secure_url || result);
+            }
+          );
+          uploadStream.end(file.buffer);
+        })
+    );
+
+    const uploadedImages = await Promise.all(
+      req.files.map(
+        (file) =>
+          new Promise((resolve, reject) =>
+          {
+            const uploadStream = cloudinary.uploader.upload_stream(
+              { folder: "products" },
+              (error, result) =>
+              {
+                if (error) return reject(error);
+                resolve(result.secure_url); // Trả về link ảnh
+              }
+            );
+            uploadStream.end(file.buffer); // Gửi buffer của file
+          })
+      )
+    );
+
+    if (uploadedImages.length < 4) {
+      return res.status(400).json({ message: "Need 4 images" });
+    }
+
+    // Lưu sản phẩm vào cơ sở dữ liệu
     const newProduct = new Products({
       category: req.body.category,
       name: req.body.name,
       price: req.body.price,
-      long_desc: req.body1.long_desc,
+      long_desc: req.body.long_desc,
       short_desc: req.body.short_desc,
-      img1: imagePaths[0],
-      img2: imagePaths[1],
-      img3: imagePaths[2],
-      img4: imagePaths[3]
-    });
-    const result = await newProduct.save();
-    return res.status(201).json({
-      result: result,
-      message: "Create product successfully"
+      img1: uploadedImages[0],
+      img2: uploadedImages[1],
+      img3: uploadedImages[2],
+      img4: uploadedImages[3],
     });
 
+    const result = await newProduct.save();
+    return res.status(201).json({
+      result,
+      message: "Create product successfully",
+    });
   } catch (error) {
-    console.log(error)
+    console.error(error);
     return res.status(500).json({
       message: "Unexpected error!",
-      error: error
     });
   }
 };
+
 
 exports.putProduct = async (req, res) =>
 {
